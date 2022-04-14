@@ -46,12 +46,15 @@ document.addEventListener('mouseover', (e) => {
     
 })
 
-const removeColumn = () => {
-    container.lastElementChild.remove();
-    removeTop.style.display = 'none';
-}
-removeTop.addEventListener('click', removeColumn);
 
+removeTop.addEventListener('click', (e) => {
+    document.querySelectorAll('.column').forEach(item => {
+        if (e.target.offsetLeft - 82  === item.firstElementChild.offsetLeft) {
+            item.remove();
+            removeTop.style.display = 'none';
+        }
+    })
+})
 
 const removeRow = () => {
     document.querySelectorAll('.column').forEach(item => {
@@ -62,11 +65,11 @@ const removeRow = () => {
 
 removeLeft.addEventListener('click', removeRow);
 
-
-
-
-
-
-
-
-
+// removeLeft.addEventListener('click', (e) => {
+//     document.querySelectorAll('.cell').forEach(item => {
+//         if (e.target.offsetTop - 82  === item.offsetTop) {
+//             // item.remove();
+//             removeLeft.style.display = 'none';
+//         }
+//     })
+// });
