@@ -56,20 +56,18 @@ removeTop.addEventListener('click', (e) => {
     })
 })
 
-const removeRow = () => {
-    document.querySelectorAll('.column').forEach(item => {
-        item.firstElementChild.remove();
-        removeLeft.style.display = 'none';
+removeLeft.addEventListener('click', (e) => {
+    document.querySelectorAll('.cell').forEach(item => {
+        if (e.target.offsetTop - 82  === item.offsetTop) {
+            item.classList.add('remove');
+        }
+        
     })
-}
-
-removeLeft.addEventListener('click', removeRow);
-
-// removeLeft.addEventListener('click', (e) => {
-//     document.querySelectorAll('.cell').forEach(item => {
-//         if (e.target.offsetTop - 82  === item.offsetTop) {
-//             // item.remove();
-//             removeLeft.style.display = 'none';
-//         }
-//     })
-// });
+    document.querySelectorAll('.cell').forEach(elem => {
+        if (elem.classList.contains('remove')) {
+            elem.remove();
+        }
+    })
+    
+    removeLeft.style.display = 'none';
+});
