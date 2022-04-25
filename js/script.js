@@ -1,110 +1,131 @@
 
 class Squares {
     constructor(rows, columns) {
-        this.rows = rows;
         this.columns = columns;
+        this.rows = rows;
+        this.activeRow = null;
+        this.activeColumn = null;
     }
 
     render() {
-        const square = document.createElement('div');
-        square.classList.add('square');
-        document.body.prepend(square);
+        const container = document.createElement('div');
+        container.classList.add('container');
+        document.body.prepend(container);
 
-        const wrapp = document.createElement('div');
-        wrapp.classList.add('wrapp');
-        square.append(wrapp);
+        const table = document.createElement('div');
+        table.classList.add('table');
+        container.append(table);
 
-        const minusTop = document.createElement('div');
-        minusTop.classList.add('removetop');
-        minusTop.textContent = '-';
-        square.prepend(minusTop); 
+        const removeTop = document.createElement('div');
+        removeTop.classList.add('removetop');
+        removeTop.textContent = '-';
+        container.prepend(removeTop); 
 
-        const minusLeft = document.createElement('div');
-        minusLeft.classList.add('removeleft');
-        minusLeft.textContent = '-';
-        square.prepend(minusLeft);
+        const removeLeft = document.createElement('div');
+        removeLeft.classList.add('removeleft');
+        removeLeft.textContent = '-';
+        container.prepend(removeLeft);
 
-        const plusColumn = document.createElement('div');
-        plusColumn.classList.add('addcolumn');
-        plusColumn.textContent = '+';
-        square.append(plusColumn);
+        const addColumn = document.createElement('div');
+        addColumn.classList.add('addcolumn');
+        addColumn.textContent = '+';
+        container.append(addColumn);
 
-        const plusRow = document.createElement('div');
-        plusRow.classList.add('addrow');
-        plusRow.textContent = '+';
-        square.append(plusRow);
+        const addRow = document.createElement('div');
+        addRow.classList.add('addrow');
+        addRow.textContent = '+';
+        container.append(addRow);
 
 
-        for(let row = 0; row < this.rows; row++) {
-            const createdRow = document.createElement('div');
-            createdRow.classList.add('row');
-            createdRow.setAttribute('row',row )
+        for(let column = 0; column < this.columns; column++) {
+            const createdColumn = document.createElement('div');
+            createdColumn.classList.add('column');
+            createdColumn.setAttribute('column',column )
 
-            for(let column = 0; column < this.columns; column++) {
-                const createdColumn = document.createElement('div');
-                createdColumn.classList.add('cell');
-                createdColumn.setAttribute('column',column )
-
-                createdRow.append(createdColumn);
+            for(let row = 0; row < this.rows; row++) {
+                const createdRow = document.createElement('div');
+                createdRow.classList.add('cell');
+                createdRow.setAttribute('row',row )
+                createdColumn.append(createdRow);
             }
-            wrapp.append(createdRow);
+            table.append(createdColumn);
         }
 
         const addVertical = () => {
-            const oneColumn = document.createElement('div');
-            oneColumn.classList.add('row');
-            wrapp.append(oneColumn);
+            const newColumn = table.lastElementChild.cloneNode(true);
+            table.append(newColumn);
+            // const newColumn = document.createElement('div');
+            // newColumn.classList.add('column');
+            // wrapp.append(newColumn);
 
-            for (let i = oneColumn.children.length; i < wrapp.firstElementChild.children.length; i++) {
-                const newCell = document.createElement('div');
-                newCell.classList.add('cell');
-                oneColumn.append(newCell);
-            }
+            // for (let i = newColumn.children.length; i < wrapp.firstElementChild.children.length; i++) {
+            //     const newRow = document.createElement('div');
+            //     newRow.classList.add('cell');
+            //     newColumn.append(newRow);
+            // }
         }
 
-        plusColumn.addEventListener('click', addVertical);
+        addColumn.addEventListener('click', addVertical);
 
         const addHorizontally = () => {
-            document.querySelectorAll('.row').forEach(item => {
+            document.querySelectorAll('.column').forEach(item => {
                 const OneRow = document.createElement('div');
                 OneRow.classList.add('cell');
                 item.append(OneRow);
             })
         }
 
-        plusRow.addEventListener('click', addHorizontally);
+        addRow.addEventListener('click', addHorizontally);
 
         document.addEventListener('mouseover', (e) => {
             if (e.target === document.body) {
-                minusLeft.style.display = 'none';
-                minusTop.style.display = 'none';
-            }
-            
-        })
-
-        wrapp.addEventListener('mousemove', (e) => {
-            if (e.target.classList.contains('cell') && wrapp.children.length > 1 && wrapp.firstElementChild.children.length > 1) {
-                minusLeft.style.top = e.target.offsetTop + 'px';
-                minusTop.style.left = e.target.offsetLeft + 'px';
-                minusLeft.style.display = 'flex';
-                minusTop.style.display = 'flex';
+                removeLeft.style.display = 'none';
+                removeTop.style.display = 'none';
             }
         })
 
-        minusTop.addEventListener('click', (e) => {
-            document.querySelectorAll('.row').forEach(item => {
-                if (e.target && e.target.offsetLeft  === item.firstElementChild.offsetLeft) {
-                    console.log(item.firstElementChild.offsetLeft)
-                    // console.log(e.target.offsetLeft)
-                    
-                    item.remove();
-                    
-                    minusTop.style.display = 'none';
+        table.addEventListener('mousemove', (e) => {
+            const target = e.target;
+            // if(target.classList.contains('cell')) {
+            //     this.activeColumn = target.parentElement.getAttribute('column')
+            //    this.activeRow = target.getAttribute('row');
+
+            //     target.parentElement.classList.add('test')
+ 
+            // }
+
+            if (target.classList.contains('cell') && table.children.length > 1 || table.firstElementChild.children.length > 1) {
+                removeLeft.style.top = target.offsetTop + 'px';
+                removeTop.style.left = target.offsetLeft + 'px';
+                removeLeft.style.display = 'flex';
+                removeTop.style.display = 'flex';
+            }
+        })
+
+        removeTop.addEventListener('click', (e) => {
+            for (let elem of document.querySelectorAll('.column')) {
+                if (e.target.offsetLeft  === elem.firstElementChild.offsetLeft) {
+                    elem.classList.add('delet');
+                    removeTop.style.display = 'none';
                 }
-            })
+            }
+
+            for (let elem of document.querySelectorAll('.column')) {
+                if (elem.classList.contains('delet')) {
+                    elem.remove();
+                    removeTop.style.display = 'none';
+                }
+            }
+
+            // document.querySelectorAll('.column').forEach(item => {
+            //     if (e.target.offsetLeft  === item.firstElementChild.offsetLeft) {
+            //         item.remove();
+            //         removeTop.style.display = 'none';
+            //     }
+            // })
         })
         
-        minusLeft.addEventListener('click', (e) => {
+        removeLeft.addEventListener('click', (e) => {
             document.querySelectorAll('.cell').forEach(item => {
                 if (e.target.offsetTop  === item.offsetTop) {
                     item.classList.add('remove');
@@ -117,7 +138,7 @@ class Squares {
                 }
             })
             
-            minusLeft.style.display = 'none';
+            removeLeft.style.display = 'none';
         });
 
     }
