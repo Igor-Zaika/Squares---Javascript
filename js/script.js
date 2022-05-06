@@ -1,110 +1,111 @@
 
 class Squares {
     constructor(rows, columns) {
-        this.rows = rows;
         this.columns = columns;
+        this.rows = rows;
+        this.activeRow = null;
+        this.activeColumn = null;
+        this.container = document.createElement('div');
+        this.table = document.createElement('div');
+        this.removeTop = document.createElement('div');
+        this.removeLeft = document.createElement('div');
+        this.addColumn = document.createElement('div');
+        this.addRow = document.createElement('div');
     }
 
     render() {
-        const square = document.createElement('div');
-        square.classList.add('square');
-        document.body.prepend(square);
+        this.container.classList.add('container');
+        document.body.prepend(this.container);
 
-        const wrapp = document.createElement('div');
-        wrapp.classList.add('wrapp');
-        square.append(wrapp);
+        this.table.classList.add('table');
+        this.container.append(this.table);
 
-        const minusTop = document.createElement('div');
-        minusTop.classList.add('removetop');
-        minusTop.textContent = '-';
-        square.prepend(minusTop); 
+        this.removeTop.classList.add('removetop', 'remove');
+        this.removeTop.textContent = '-';
+        this.container.prepend(this.removeTop); 
 
-        const minusLeft = document.createElement('div');
-        minusLeft.classList.add('removeleft');
-        minusLeft.textContent = '-';
-        square.prepend(minusLeft);
+        this.removeLeft.classList.add('removeleft', 'remove');
+        this.removeLeft.textContent = '-';
+        this.container.prepend(this.removeLeft);
 
-        const plusColumn = document.createElement('div');
-        plusColumn.classList.add('addcolumn');
-        plusColumn.textContent = '+';
-        square.append(plusColumn);
+        this.addColumn.classList.add('addcolumn');
+        this.addColumn.textContent = '+';
+        this.container.append(this.addColumn);
 
-        const plusRow = document.createElement('div');
-        plusRow.classList.add('addrow');
-        plusRow.textContent = '+';
-        square.append(plusRow);
+        this.addRow.classList.add('addrow');
+        this.addRow.textContent = '+';
+        this.container.append(this.addRow);
 
 
-        for(let row = 0; row < this.rows; row++) {
-            const createdRow = document.createElement('div');
-            createdRow.classList.add('row');
-            createdRow.setAttribute('row',row )
+        for(let column = 0; column < this.columns; column++) {
+            const createdColumn = document.createElement('div');
+            createdColumn.classList.add('column');
+            createdColumn.setAttribute('column',column )
 
-            for(let column = 0; column < this.columns; column++) {
-                const createdColumn = document.createElement('div');
-                createdColumn.classList.add('cell');
-                createdColumn.setAttribute('column',column )
-
-                createdRow.append(createdColumn);
+            for(let row = 0; row < this.rows; row++) {
+                const createdRow = document.createElement('div');
+                createdRow.classList.add('cell');
+                createdRow.setAttribute('row',row )
+                createdColumn.append(createdRow);
             }
-            wrapp.append(createdRow);
+            this.table.append(createdColumn);
         }
 
+        return this;
+    }
+
+    addListeners() {
         const addVertical = () => {
-            const oneColumn = document.createElement('div');
-            oneColumn.classList.add('row');
-            wrapp.append(oneColumn);
-
-            for (let i = oneColumn.children.length; i < wrapp.firstElementChild.children.length; i++) {
-                const newCell = document.createElement('div');
-                newCell.classList.add('cell');
-                oneColumn.append(newCell);
-            }
+            const newColumn = this.table.lastElementChild.cloneNode(true);
+            this.table.append(newColumn);
         }
 
-        plusColumn.addEventListener('click', addVertical);
+        this.addColumn.addEventListener('click', addVertical);
 
         const addHorizontally = () => {
-            document.querySelectorAll('.row').forEach(item => {
+            document.querySelectorAll('.column').forEach(item => {
                 const OneRow = document.createElement('div');
                 OneRow.classList.add('cell');
                 item.append(OneRow);
             })
         }
 
-        plusRow.addEventListener('click', addHorizontally);
+        this.addRow.addEventListener('click', addHorizontally);
 
-        document.addEventListener('mouseover', (e) => {
-            if (e.target === document.body) {
-                minusLeft.style.display = 'none';
-                minusTop.style.display = 'none';
-            }
-            
+        this.container.addEventListener('mouseleave', () => {
+            this.removeLeft.style.display = 'none';
+            this.removeTop.style.display = 'none';
         })
 
-        wrapp.addEventListener('mousemove', (e) => {
-            if (e.target.classList.contains('cell') && wrapp.children.length > 1 && wrapp.firstElementChild.children.length > 1) {
-                minusLeft.style.top = e.target.offsetTop + 'px';
-                minusTop.style.left = e.target.offsetLeft + 'px';
-                minusLeft.style.display = 'flex';
-                minusTop.style.display = 'flex';
+        this.table.addEventListener('mousemove', (e) => {
+            // const target = e.target;
+            // if(target.classList.contains('cell')) {
+            //     this.activeColumn = target.parentElement.getAttribute('column')
+            //    this.activeRow = target.getAttribute('row');
+
+            //     target.parentElement.classList.add('test')
+            // }
+
+            if (target.classList.contains('cell')) {
+                this.removeLeft.style.top = target.offsetTop + 'px';
+                this.removeTop.style.left = target.offsetLeft + 'px';
+                this. table.children.length > 1 ? this.removeTop.style.display = 'flex' : this.removeTop.style.display = 'none';
+                this.table.firstElementChild.children.length > 1 ? this.removeLeft.style.display = 'flex' : this.removeLeft.style.display = 'none'
             }
         })
 
-        minusTop.addEventListener('click', (e) => {
-            document.querySelectorAll('.row').forEach(item => {
-                if (e.target && e.target.offsetLeft  === item.firstElementChild.offsetLeft) {
-                    console.log(item.firstElementChild.offsetLeft)
-                    // console.log(e.target.offsetLeft)
-                    
-                    item.remove();
-                    
-                    minusTop.style.display = 'none';
+        this.removeTop.addEventListener('click', (e) => {
+            const columns = document.querySelectorAll('.column');
+            for (let i = 0; i < columns.length; i++) {
+                if (columns[i].offsetLeft === e.target.offsetLeft) {
+                    columns[i].remove();
+                    this.removeTop.style.display = 'none';
+                    return;
                 }
-            })
+            }
         })
         
-        minusLeft.addEventListener('click', (e) => {
+        this.removeLeft.addEventListener('click', (e) => {
             document.querySelectorAll('.cell').forEach(item => {
                 if (e.target.offsetTop  === item.offsetTop) {
                     item.classList.add('remove');
@@ -117,14 +118,14 @@ class Squares {
                 }
             })
             
-            minusLeft.style.display = 'none';
+            this.removeLeft.style.display = 'none';
         });
-
+        return this;
     }
 
 }
 
-new Squares(4, 4).render();
+new Squares(4, 4).render().addListeners();
 
 
 
